@@ -1,9 +1,9 @@
 'use server'
 
-import type { CheckoutSessionInputs } from 'components/checkout-section'
+import type { CheckoutSessionInputs } from '@/components/checkout-section'
+import type { CustomerSessionInputs } from '@/components/customer-session-section'
 
-import stripe from '@/lib/stripe'
-import { PaymentIntentInputs } from 'components/payment-intent-section'
+import stripe, { betaStripe } from '@/lib/stripe'
 
 export async function createCheckoutSession(
   data: CheckoutSessionInputs & { cancel_url: string; success_url: string }
@@ -26,13 +26,13 @@ export async function createCheckoutSession(
   }
 }
 
-export async function createPaymentIntent(
-  data: PaymentIntentInputs
+export async function createCustomerSession(
+  data: CustomerSessionInputs
 ): Promise<{ clientSecret: string }> {
   try {
-    const paymentIntent = await stripe.paymentIntents.create(data)
+    const customerSession = await betaStripe.customerSessions.create(data)
 
-    return { clientSecret: paymentIntent.client_secret as string }
+    return { clientSecret: customerSession.client_secret as string }
   } catch (error) {
     throw new Error(error)
   }
