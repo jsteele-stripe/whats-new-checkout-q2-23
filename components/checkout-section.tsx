@@ -17,7 +17,7 @@ export default function CheckoutSection(): JSX.Element {
     formState: { errors },
     handleSubmit
   } = useForm<CheckoutSessionInputs>({
-    defaultValues: { customer: 'cus_OFAz1XS0ChACvS' },
+    defaultValues: { customer: process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_ID },
     resolver: zodResolver(schema)
   })
 
