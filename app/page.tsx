@@ -3,6 +3,7 @@ import type { NextPage } from 'next'
 import * as React from 'react'
 
 import CustomerSessionSection from '@/components/customer-session-section'
+import CheckoutSection from '@/components/checkout-section'
 
 export default function Index({}: NextPage) {
   return (
@@ -13,6 +14,7 @@ export default function Index({}: NextPage) {
         </h1>
         <div className="divide-y">
           <CustomerSessionSection />
+          <CheckoutSection />
         </div>
       </div>
     </div>

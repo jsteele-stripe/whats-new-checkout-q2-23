@@ -8,18 +8,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { createCheckoutSession } from '../app/actions'
 
-const schema = z.object({
-  customer_email: z.string().email()
-})
+const schema = z.object({ customer: z.string() })
 
 export type CheckoutSessionInputs = z.infer<typeof schema>
 
 export default function CheckoutSection(): JSX.Element {
   const {
     formState: { errors },
-    handleSubmit,
-    register
+    handleSubmit
   } = useForm<CheckoutSessionInputs>({
+    defaultValues: { customer: 'cus_OFAz1XS0ChACvS' },
     resolver: zodResolver(schema)
   })
 
@@ -34,20 +32,32 @@ export default function CheckoutSection(): JSX.Element {
   }
 
   const snippet = `const checkoutSession: Stripe.Checkout.Session = await stripe.checkout.sessions.create({
-  customer_email: '4242@stripe.com',
+  cancel_url: 'https://stripe.com?success',
   line_items: [{
+    // Zero-amount line item
     price: 'price_xyz'
     quantity: 1
   }],
   mode: 'payment',
   success_url: 'https://stripe.com?success',
-})`
+})
+
+// POST /v1/checkout_sessions response
+{
+  id: 'cs_test_a1B9ulTCaJ0cacHj04HTjRz8w0s5RdSUiiUtf05CAor4N4PNYCvdWqc5m9',
+  object: 'checkout.session',
+  amount_subtotal: 0,
+  amount_total: 0,
+  mode: 'payment',
+  status: 'open'
+}`
 
   return (
     <div className="py-8">
-      <h1 className="text-2xl font-bold">Checkout Session creation</h1>
+      <h1 className="text-2xl font-bold">No-cost orders with Checkout</h1>
       <p className="mt-2 text-lg text-gray-600">
-        Example API call to create a Checkout Session
+        Example API call to create a zero-amount Checkout Session which can be
+        completed without payment.
       </p>
       <div className="space-y-8">
         <SyntaxHighlighter language="typescript" style={oneDark}>
@@ -57,25 +67,6 @@ export default function CheckoutSection(): JSX.Element {
           onSubmit={handleSubmit(onSubmit)}
           className="sm:max-w-md space-y-8"
         >
-          <div className="grid grid-cols-1 gap-6">
-            <label className="block">
-              <span className="text-gray-700">E-mail address</span>
-              <input
-                {...register('customer_email')}
-                type="email"
-                className="
-                    mt-1
-                    block
-                    w-full
-                    rounded-md
-                    border-gray-300
-                    shadow-sm
-                    focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
-                  "
-                placeholder="4242@stripe.com"
-              />
-            </label>
-          </div>
           <button
             type="submit"
             className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
